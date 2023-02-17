@@ -1,0 +1,70 @@
+{% comment %} {% include 'update_image.html' %} {% endcomment %}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC"
+      crossorigin="anonymous"
+    />
+    <title>Image url</title>
+    <style>
+      img {
+        height: 200px;
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+      <form action="" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+      <input type="file" name="images" multiple />
+      <button class="btn btn-warning btn-sm">Upload</button>
+    </form>
+    {% if messages %}
+   {% for message in messages %}
+      <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+         {{ message }}
+         <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+   {% endfor %}
+{% endif %}
+    <hr />
+      {% for img in final_images %}
+      {% for im in img %}
+      {% if not forloop.first %}
+      {% comment %} <h4>{{im}}</h4> {% endcomment %}
+      {% comment %} {% for im in img|slice:"1:" %} {% endcomment %}
+      {% comment %} {% if forloop.counter > 1 %} {% endcomment %}
+      <div class="image-container">
+        <p>{{img.0}}</p>
+        <img src="{{im}}" alt="Image" />
+        <a href="{{im}}"><p>{{im}}</p> </a>
+        <form method="POST" action="{% url 'update_image' img.0 %}" enctype="multipart/form-data">
+            {% csrf_token %}
+            <input type="hidden" name="image_name" value="{{im}}">
+            <input type="file" name="new_images" value="image">
+            <button class='btn btn-success'>Update</button>
+            {% comment %} <input type="hidden" name="image_url" id="file-input-{{ img.0 }}" />
+            <input type="file" name="images" id="file-input-{{ img.0 }}" style="display:"> {% endcomment %}
+            {% comment %} <button type="button" class='btn btn-warning btn-sm' onclick="document.getElementById('file-input-{{ img.0 }}').click()">Update</button> {% endcomment %}
+        </form>
+           <form method="POST" action="{% url 'delete_image' id=img.0 %}">   
+            {% csrf_token %}
+            <input type="hidden" name="image_delete" value="{{ im }}">
+            <button class='btn btn-danger'>Delete</button>
+          </form>
+    </div>
+    {% endif %}
+    {% endfor %} 
+    {% endfor %} 
+    
+    {% comment %} {% endif %} {% endcomment %}
+    {% comment %} {% endfor %} {% endcomment %}
+    {% comment %} </form> {% endcomment %}
+  </body>
+</html>
